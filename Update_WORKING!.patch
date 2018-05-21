@@ -1,0 +1,178 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1526886010000)
++++ app/src/main/AndroidManifest.xml	(date 1526888589154)
+@@ -16,7 +16,8 @@
+                 <category android:name="android.intent.category.LAUNCHER"/>
+             </intent-filter>
+         </activity>
+-        <activity android:name=".DeviceControlActivity"/>
++        <activity android:name=".DeviceControlActivity"
++            android:theme="@style/appCompat"/>
+         <service android:name=".BluetoothLeService" android:enabled="true"/>
+     </application>
+ 
+Index: app/src/main/res/values/base-strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/base-strings.xml	(date 1526886010000)
++++ app/src/main/res/values/base-strings.xml	(date 1526625086765)
+@@ -16,7 +16,7 @@
+ -->
+ 
+ <resources>
+-    <string name="app_name">BLDC Control</string>
++    <string name="app_name">BluetoothLeGatt</string>
+     <string name="intro_message">
+         <![CDATA[
+         
+Index: app/src/main/java/joshua/barker/com/mobilecomp/DeviceControlActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/joshua/barker/com/mobilecomp/DeviceControlActivity.java	(date 1526886010000)
++++ app/src/main/java/joshua/barker/com/mobilecomp/DeviceControlActivity.java	(date 1526888892419)
+@@ -206,8 +206,8 @@
+         tv_pwm = (TextView) findViewById(R.id.tv_PWM);
+ 
+ 
+-        getActionBar().setTitle(mDeviceName);
+-        getActionBar().setDisplayHomeAsUpEnabled(true);
++        getSupportActionBar().setTitle(mDeviceName);
++        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
+         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+ 
+Index: app/src/main/java/joshua/barker/com/mobilecomp/DeviceScanActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/joshua/barker/com/mobilecomp/DeviceScanActivity.java	(date 1526886010000)
++++ app/src/main/java/joshua/barker/com/mobilecomp/DeviceScanActivity.java	(date 1526887002583)
+@@ -37,6 +37,7 @@
+ import android.widget.Toast;
+ 
+ import java.util.ArrayList;
++import java.util.Objects;
+ 
+ /**
+  * Activity for scanning and displaying available Bluetooth LE devices.
+Index: app/src/main/res/menu/gatt_services.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/gatt_services.xml	(date 1526886010000)
++++ app/src/main/res/menu/gatt_services.xml	(date 1526887545361)
+@@ -15,11 +15,6 @@
+ -->
+ <menu xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item android:title="Refresh"
+-          android:id="@+id/menu_refresh"
+-          android:checkable="false"
+-          android:orderInCategory="1"
+-          app:showAsAction="ifRoom" />
+     <item android:id="@+id/menu_connect"
+           android:title="@string/menu_connect"
+           android:orderInCategory="100"
+Index: app/src/main/res/layout/gatt_services_characteristics.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/gatt_services_characteristics.xml	(date 1526886010000)
++++ app/src/main/res/layout/gatt_services_characteristics.xml	(date 1526886138218)
+@@ -122,6 +122,8 @@
+ 
+     </LinearLayout>
+ 
++
++
+     <ExpandableListView
+         android:id="@+id/gatt_services_list"
+         android:layout_width="match_parent"
+@@ -136,6 +138,21 @@
+         android:gravity="bottom"
+         android:orientation="vertical">
+ 
++        <EditText
++            android:id="@+id/et_test"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:hint="Enter Command:"
++            android:padding="8dp"/>
++
++        <TextView
++            android:id="@+id/data_value"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_below="@+id/et_test"
++            android:layout_centerHorizontal="true"
++            android:hint="Serial Read:"
++            android:textSize="14sp"/>
+ 
+ 
+ 
+Index: app/src/main/res/layout/layout_dialog.xml
+===================================================================
+--- app/src/main/res/layout/layout_dialog.xml	(date 1526886010000)
++++ app/src/main/res/layout/layout_dialog.xml	(date 1526886010000)
+@@ -1,23 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    android:padding="16dp">
+-
+-    <EditText
+-        android:id="@+id/et_test"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:hint="Enter Command:"
+-        android:padding="8dp"/>
+-
+-    <TextView
+-        android:id="@+id/data_value"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:layout_below="@+id/et_test"
+-        android:layout_centerHorizontal="true"
+-        android:hint="Serial Read:"
+-        android:textSize="14sp"/>
+-
+-</RelativeLayout>
+\ No newline at end of file
+Index: app/src/main/res/values/template-styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/template-styles.xml	(date 1526886010000)
++++ app/src/main/res/values/template-styles.xml	(date 1526888716098)
+@@ -18,13 +18,15 @@
+ 
+     <!-- Activity themes -->
+ 
+-    <style name="Theme.AppCompat.Base" parent="Theme.AppCompat.Light" />
++    <style name="Theme.Base" parent="android:Theme.Light" />
+ 
+-    <style name="Theme.AppCompat.Sample" parent="Theme.AppCompat.Base" />
++    <style name="Theme.Sample" parent="Theme.Base" />
+ 
+-    <style name="AppTheme" parent="Theme.AppCompat.Light" />
++    <style name="AppTheme" parent="Theme.Sample" />
+ 
++    <style name="appCompat" parent="Theme.AppCompat.DayNight.DarkActionBar"/>
+     <!-- Widget styling -->
++
+     <style name="Widget" />
+ 
+     <style name="Widget.SampleMessage">

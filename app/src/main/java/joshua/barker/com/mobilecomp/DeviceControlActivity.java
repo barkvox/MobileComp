@@ -26,7 +26,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -40,11 +39,8 @@ import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Time;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -61,17 +57,20 @@ public class DeviceControlActivity extends AppCompatActivity {
     public static final String EXTRAS_DEVICE_NAME = "DEVICE_NAME";
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
+    public static final String EXTRAS_DATA = "DATA";
+
 
     private EditText et_test;
     private SeekBar sb_pwm;
     private Button btn_send;
     private Button btn_history;
+    private Button btn_add;
     private TextView tv_current;
     private TextView tv_temp;
     private TextView mDataField;
     private TextView tv_pwm;
-    private String mDeviceName;
-    private String mDeviceAddress;
+    public String mDeviceName;
+    public String mDeviceAddress;
     private ExpandableListView mGattServicesList;
     private BluetoothLeService mBluetoothLeService;
     private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics =
@@ -82,7 +81,7 @@ public class DeviceControlActivity extends AppCompatActivity {
     private final String LIST_NAME = "NAME";
     private final String LIST_UUID = "UUID";
 
-    private String test_string = "";
+//    private String test_string = "";
     private String send_string = "";
 
     private BluetoothGattCharacteristic bluetoothGattCharacteristicHM_10;
@@ -198,8 +197,11 @@ public class DeviceControlActivity extends AppCompatActivity {
         setContentView(R.layout.gatt_services_characteristics);
 
         final Intent intent = getIntent();
-        mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
-        mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+        if(intent !=null) {
+            mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
+            mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
+        }
+
         mDatabaseHelper = new DatabaseHelper(DeviceControlActivity.this);
 
         // Sets up UI references.
@@ -211,9 +213,10 @@ public class DeviceControlActivity extends AppCompatActivity {
         mDataField = (TextView) findViewById(R.id.data_value);
         btn_send = (Button) findViewById(R.id.btn_send);
         btn_history = (Button) findViewById(R.id.btn_history);
+        btn_add = (Button) findViewById(R.id.btn_addDb);
         et_test = (EditText) findViewById(R.id.et_test);
         sb_pwm = (SeekBar) findViewById(R.id.sb_PWM);
-        tv_pwm = (TextView) findViewById(R.id.tv_PWM);
+        tv_pwm = (TextView) findViewById(R.id.et_PWM);
 
 
         getSupportActionBar().setTitle(mDeviceName);
@@ -221,7 +224,22 @@ public class DeviceControlActivity extends AppCompatActivity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
-     /*   btn_history.setOnClickListener(new View.OnClickListener() {
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                long resultInsert = mDatabaseHelper.insert(-1, Calendar.getInstance().getTime().toString(),
+                        tv_temp.getText().toString(),tv_current.getText().toString(), tv_pwm.getText().toString());
+                if(resultInsert == -1){
+                    Toast.makeText(DeviceControlActivity.this, "Some error occured while Inserting", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(DeviceControlActivity.this, "Data Inserted Successfully, ID " + resultInsert, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        btn_history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent databaseIntent = new Intent(DeviceControlActivity.this, DatabaseActivity.class);
@@ -234,7 +252,7 @@ public class DeviceControlActivity extends AppCompatActivity {
             }
         });
 
-*/
+
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -321,7 +339,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateConnectionState(final int resourceId) {
+    public void updateConnectionState(final int resourceId) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -330,7 +348,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         });
     }
 
-    private void displayData(String data) {
+    public void displayData(String data) {
         Log.d(TAG, "displayData: called.");
         if (data != null) {
             mDataField.setText(data);
@@ -426,8 +444,8 @@ public class DeviceControlActivity extends AppCompatActivity {
         mBluetoothLeService.writeCharacteristic(bluetoothGattCharacteristicHM_10);
         mBluetoothLeService.setCharacteristicNotification(bluetoothGattCharacteristicHM_10,true);
 
-        long resultInsert =  mDatabaseHelper.insert(-1, Calendar.getInstance().toString(),tv_current.getText().toString(),tv_temp.getText().toString(),
-                Integer.valueOf(tv_pwm.getText().toString()));
+        long resultInsert =  mDatabaseHelper.insert(-1, Calendar.getInstance().toString(),tv_current.getText().toString(),
+                tv_temp.getText().toString(), tv_pwm.getText().toString());
         if(resultInsert == -1){
             Toast.makeText(DeviceControlActivity.this, "Some error occured while Inserting", Toast.LENGTH_SHORT).show();
         }else{

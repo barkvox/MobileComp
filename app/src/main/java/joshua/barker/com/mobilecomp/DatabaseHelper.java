@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,12 +17,21 @@ import java.util.Date;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
 
-    private static final String DB_NAME = "mydb.db";
+    private static final String DB_NAME = "sensor.db";
     private static final int VERSION = 1;
+    SimpleDateFormat dateFormatter;
 
-    private static final String TABLE_NAME = "bldc_driver";
+
+    Calendar calendar = Calendar.getInstance();
+    String theDate = "" + calendar.get(Calendar.DAY_OF_MONTH) + calendar.get(Calendar.HOUR_OF_DAY);
+
+
+
+
+
+    public static final String TABLE_NAME = "bldc_driver_1";
     public static final String ID = "id";
-    public static final String DATE_TIME = Calendar.getInstance().toString();
+    public static final String DATE_TIME = "dateTime";
     public static final String TEMP = "temp";
     public static final String CURRENT = "current";
     public static final String PWM = "pwm_value";
@@ -37,10 +49,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String queryTable = "CREATE TABLE " + TABLE_NAME +
                 " (" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                DATE_TIME + " DATETIME NOT NULL, " +
+                DATE_TIME + " TEXT NOT NULL, " +
                 TEMP + "TEXT NOT NULL, " +
                 CURRENT + " TEXT NOT NULL, " +
-                PWM + " REAL NOT NULL" +
+                PWM + " TEXT NOT NULL" +
                 ")";
 
         db.execSQL(queryTable);
@@ -68,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public long insert(int id,  String dateTime, String temp, String current, int pwm) {
+    public long insert(int id,  String dateTime, String temp, String current, String pwm) {
         Log.d(TAG, "insert: called");
 
         ContentValues values = new ContentValues();
@@ -82,7 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return myDB.insert(TABLE_NAME, null, values);
     }
 
-    public long update(int id, String dateTime, String temp, String current, int pwm) {
+    public long update(int id, String dateTime, String temp, String current, String pwm) {
         Log.d(TAG, "insert: called");
 
         ContentValues values = new ContentValues();
