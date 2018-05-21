@@ -122,6 +122,8 @@
 
     </LinearLayout>
 
+
+
     <ExpandableListView
         android:id="@+id/gatt_services_list"
         android:layout_width="match_parent"
@@ -136,6 +138,21 @@
         android:gravity="bottom"
         android:orientation="vertical">
 
+        <EditText
+            android:id="@+id/et_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Command:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/data_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/et_test"
+            android:layout_centerHorizontal="true"
+            android:hint="Serial Read:"
+            android:textSize="14sp"/>
 
 
 

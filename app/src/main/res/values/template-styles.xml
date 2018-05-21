@@ -18,13 +18,15 @@
 
     <!-- Activity themes -->
 
-    <style name="Theme.AppCompat.Base" parent="Theme.AppCompat.Light" />
+    <style name="Theme.Base" parent="android:Theme.Light" />
 
-    <style name="Theme.AppCompat.Sample" parent="Theme.AppCompat.Base" />
+    <style name="Theme.Sample" parent="Theme.Base" />
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light" />
+    <style name="AppTheme" parent="Theme.Sample" />
 
+    <style name="appCompat" parent="Theme.AppCompat.DayNight.DarkActionBar"/>
     <!-- Widget styling -->
+
     <style name="Widget" />
 
     <style name="Widget.SampleMessage">
