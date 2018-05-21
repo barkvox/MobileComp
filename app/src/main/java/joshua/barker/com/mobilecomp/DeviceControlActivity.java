@@ -16,7 +16,6 @@
 
 package joshua.barker.com.mobilecomp;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.BroadcastReceiver;
@@ -27,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -38,8 +38,13 @@ import android.widget.ExpandableListView;
 import android.widget.SeekBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -61,7 +66,8 @@ public class DeviceControlActivity extends AppCompatActivity {
     private SeekBar sb_pwm;
     private Button btn_send;
     private Button btn_history;
-    private TextView mConnectionState;
+    private TextView tv_current;
+    private TextView tv_temp;
     private TextView mDataField;
     private TextView tv_pwm;
     private String mDeviceName;
@@ -80,6 +86,8 @@ public class DeviceControlActivity extends AppCompatActivity {
     private String send_string = "";
 
     private BluetoothGattCharacteristic bluetoothGattCharacteristicHM_10;
+
+    DatabaseHelper mDatabaseHelper;
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -124,8 +132,9 @@ public class DeviceControlActivity extends AppCompatActivity {
                 // Show all the supported services and characteristics on the user interface.
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
+              String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
                 //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
-                    test_string = ("" + 20);
+                 //   test_string = ("" + 20);
                 //Echo back received data, with something inserted
                 final byte[] rxBytes = bluetoothGattCharacteristicHM_10.getValue(); // THIS IS FOR ANDROID TO READ
               //  final byte[] rxBytes = test_string.getBytes();
@@ -191,13 +200,14 @@ public class DeviceControlActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         mDeviceName = intent.getStringExtra(EXTRAS_DEVICE_NAME);
         mDeviceAddress = intent.getStringExtra(EXTRAS_DEVICE_ADDRESS);
-
+        mDatabaseHelper = new DatabaseHelper(DeviceControlActivity.this);
 
         // Sets up UI references.
-        ((TextView) findViewById(R.id.temp_display)).setText(mDeviceAddress);
+      ((TextView) findViewById(R.id.temp_display)).setText(mDeviceAddress);
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
-        mConnectionState = (TextView) findViewById(R.id.connection_state);
+        tv_temp = (TextView) findViewById(R.id.temp_display);
+        tv_current = (TextView) findViewById(R.id.current_display);
         mDataField = (TextView) findViewById(R.id.data_value);
         btn_send = (Button) findViewById(R.id.btn_send);
         btn_history = (Button) findViewById(R.id.btn_history);
@@ -249,6 +259,8 @@ public class DeviceControlActivity extends AppCompatActivity {
 
             }
         });
+
+
 
 
     }
@@ -313,7 +325,7 @@ public class DeviceControlActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mConnectionState.setText(resourceId);
+                tv_current.setText(resourceId);
             }
         });
     }
@@ -413,6 +425,16 @@ public class DeviceControlActivity extends AppCompatActivity {
         bluetoothGattCharacteristicHM_10.setValue(send_string);
         mBluetoothLeService.writeCharacteristic(bluetoothGattCharacteristicHM_10);
         mBluetoothLeService.setCharacteristicNotification(bluetoothGattCharacteristicHM_10,true);
+
+        long resultInsert =  mDatabaseHelper.insert(-1, Calendar.getInstance().toString(),tv_current.getText().toString(),tv_temp.getText().toString(),
+                Integer.valueOf(tv_pwm.getText().toString()));
+        if(resultInsert == -1){
+            Toast.makeText(DeviceControlActivity.this, "Some error occured while Inserting", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(DeviceControlActivity.this, "Data Inserted Successfully, ID " + resultInsert, Toast.LENGTH_SHORT).show();
+        }
+
+
 
     }
 }

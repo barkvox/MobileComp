@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
 
@@ -15,7 +19,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_NAME = "bldc_driver";
     public static final String ID = "id";
-    public static final String DATE_TIME = "date_time";
+    public static final String DATE_TIME = Calendar.getInstance().toString();
     public static final String TEMP = "temp";
     public static final String CURRENT = "current";
     public static final String PWM = "pwm_value";
@@ -33,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String queryTable = "CREATE TABLE " + TABLE_NAME +
                 " (" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                DATE_TIME + " TEXT NOT NULL, " +
+                DATE_TIME + " DATETIME NOT NULL, " +
                 TEMP + "TEXT NOT NULL, " +
                 CURRENT + " TEXT NOT NULL, " +
                 PWM + " REAL NOT NULL" +
@@ -64,30 +68,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public long insert(int id, String fName, String lName, String address, Double salary) {
+    public long insert(int id,  String dateTime, String temp, String current, int pwm) {
         Log.d(TAG, "insert: called");
 
         ContentValues values = new ContentValues();
         if (id != -1)
             values.put(ID, id);
-        values.put(DATE_TIME, fName);
-        values.put(TEMP, lName);
-        values.put(CURRENT, address);
-        values.put(PWM, salary);
+            values.put(DATE_TIME, dateTime);
+            values.put(TEMP, temp);
+            values.put(CURRENT, current);
+            values.put(PWM, pwm);
 
         return myDB.insert(TABLE_NAME, null, values);
     }
 
-    public long update(int id, String fName, String lName, String address, Double salary) {
+    public long update(int id, String dateTime, String temp, String current, int pwm) {
         Log.d(TAG, "insert: called");
 
         ContentValues values = new ContentValues();
 
         values.put(ID, id);
-        values.put(DATE_TIME, fName);
-        values.put(TEMP, lName);
-        values.put(CURRENT, address);
-        values.put(PWM, salary);
+        values.put(DATE_TIME, dateTime);
+        values.put(TEMP, temp);
+        values.put(CURRENT, current);
+        values.put(PWM, pwm);
 
         String where = ID + " = " + id;
 
