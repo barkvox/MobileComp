@@ -17,7 +17,7 @@ import java.util.Date;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
 
-    private static final String DB_NAME = "sensor.db";
+    private static final String DB_NAME = "mobile.db";
     private static final int VERSION = 1;
     SimpleDateFormat dateFormatter;
 
@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public static final String TABLE_NAME = "bldc_driver_1";
+    public static final String TABLE_NAME = "new";
     public static final String ID = "id";
     public static final String DATE_TIME = "dateTime";
     public static final String TEMP = "temp";
@@ -50,9 +50,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 " (" +
                 ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 DATE_TIME + " TEXT NOT NULL, " +
-                TEMP + "TEXT NOT NULL, " +
+                TEMP + " TEXT NOT NULL, " +
                 CURRENT + " TEXT NOT NULL, " +
-                PWM + " TEXT NOT NULL" +
+                PWM + " TEXT NOT NULL " +
                 ")";
 
         db.execSQL(queryTable);
@@ -86,10 +86,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         if (id != -1)
             values.put(ID, id);
-            values.put(DATE_TIME, dateTime);
-            values.put(TEMP, temp);
-            values.put(CURRENT, current);
-            values.put(PWM, pwm);
+        values.put(DATE_TIME, dateTime);
+        values.put(TEMP, temp);
+        values.put(CURRENT, current);
+        values.put(PWM, pwm);
 
         return myDB.insert(TABLE_NAME, null, values);
     }

@@ -132,15 +132,15 @@ public class DeviceControlActivity extends AppCompatActivity {
                 displayGattServices(mBluetoothLeService.getSupportedGattServices());
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
               String data = intent.getStringExtra(BluetoothLeService.EXTRA_DATA);
-                //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
+                displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
                  //   test_string = ("" + 20);
                 //Echo back received data, with something inserted
-                final byte[] rxBytes = bluetoothGattCharacteristicHM_10.getValue(); // THIS IS FOR ANDROID TO READ
+               // final byte[] rxBytes = bluetoothGattCharacteristicHM_10.getValue(); // THIS IS FOR ANDROID TO READ
               //  final byte[] rxBytes = test_string.getBytes();
-                final byte[] insertSomething = {(byte)'\n'};
-                byte[] txBytes = new byte[insertSomething.length + rxBytes.length];
-                System.arraycopy(insertSomething, 0, txBytes, 0, insertSomething.length);
-                System.arraycopy(rxBytes, 0, txBytes, insertSomething.length, rxBytes.length);
+              //  final byte[] insertSomething = {(byte)'\n'};
+              //  byte[] txBytes = new byte[insertSomething.length + rxBytes.length];
+             //   System.arraycopy(insertSomething, 0, txBytes, 0, insertSomething.length);
+              //  System.arraycopy(rxBytes, 0, txBytes, insertSomething.length, rxBytes.length);
 
                 if(bluetoothGattCharacteristicHM_10 != null){
                 //DON'T TOUCH THIS!!!!
@@ -224,13 +224,19 @@ public class DeviceControlActivity extends AppCompatActivity {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
 
+
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-                long resultInsert = mDatabaseHelper.insert(-1, Calendar.getInstance().getTime().toString(),
-                        tv_temp.getText().toString(),tv_current.getText().toString(), tv_pwm.getText().toString());
+                int id = -1;
+                String dateTime = "Now";//Calendar.getInstance().getTime().toString().trim();
+                String temp = "Test";//tv_temp.getText().toString().trim();
+                String current = "Test";//tv_current.getText().toString().trim();
+                String pwm = "Test";//tv_pwm.getText().toString().trim();
+
+                long resultInsert = mDatabaseHelper.insert(id, dateTime, temp, current, pwm);
                 if(resultInsert == -1){
                     Toast.makeText(DeviceControlActivity.this, "Some error occured while Inserting", Toast.LENGTH_SHORT).show();
                 }else{
@@ -239,12 +245,15 @@ public class DeviceControlActivity extends AppCompatActivity {
             }
         });
 
+
+
         btn_history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent databaseIntent = new Intent(DeviceControlActivity.this, DatabaseActivity.class);
                 try {
                     startActivity(databaseIntent);
+
                 }
                 catch (Exception e){
                     Log.d(TAG, "onClick: " + e);
@@ -287,6 +296,19 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart: called");
+        super.onStart();
+        mDatabaseHelper.openDB();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(TAG, "onStop: called");
+        super.onStop();
+        mDatabaseHelper.closeDB();
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -343,15 +365,20 @@ public class DeviceControlActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                tv_current.setText(resourceId);
+                //tv_current.setText(resourceId);
             }
         });
     }
 
     public void displayData(String data) {
         Log.d(TAG, "displayData: called.");
+
         if (data != null) {
-            mDataField.setText(data);
+
+            String[] splited = data.split(" ");
+
+            tv_current.setText(splited[2]);
+            tv_temp.setText(splited[1]);
         }
     }
 
@@ -443,15 +470,6 @@ public class DeviceControlActivity extends AppCompatActivity {
         bluetoothGattCharacteristicHM_10.setValue(send_string);
         mBluetoothLeService.writeCharacteristic(bluetoothGattCharacteristicHM_10);
         mBluetoothLeService.setCharacteristicNotification(bluetoothGattCharacteristicHM_10,true);
-
-        long resultInsert =  mDatabaseHelper.insert(-1, Calendar.getInstance().toString(),tv_current.getText().toString(),
-                tv_temp.getText().toString(), tv_pwm.getText().toString());
-        if(resultInsert == -1){
-            Toast.makeText(DeviceControlActivity.this, "Some error occured while Inserting", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(DeviceControlActivity.this, "Data Inserted Successfully, ID " + resultInsert, Toast.LENGTH_SHORT).show();
-        }
-
 
 
     }
