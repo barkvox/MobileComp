@@ -17,7 +17,7 @@ import java.util.Date;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseHelper";
 
-    private static final String DB_NAME = "mobile.db";
+    private static final String DB_NAME = "mobcomp.db";
     private static final int VERSION = 1;
     SimpleDateFormat dateFormatter;
 
@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-    public static final String TABLE_NAME = "new";
+    public static final String TABLE_NAME = "mobile";
     public static final String ID = "id";
     public static final String DATE_TIME = "dateTime";
     public static final String TEMP = "temp";

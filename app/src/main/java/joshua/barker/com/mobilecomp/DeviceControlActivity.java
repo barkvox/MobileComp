@@ -205,7 +205,6 @@ public class DeviceControlActivity extends AppCompatActivity {
         mDatabaseHelper = new DatabaseHelper(DeviceControlActivity.this);
 
         // Sets up UI references.
-      ((TextView) findViewById(R.id.temp_display)).setText(mDeviceAddress);
         mGattServicesList = (ExpandableListView) findViewById(R.id.gatt_services_list);
         mGattServicesList.setOnChildClickListener(servicesListClickListner);
         tv_temp = (TextView) findViewById(R.id.temp_display);
@@ -231,10 +230,10 @@ public class DeviceControlActivity extends AppCompatActivity {
 
 
                 int id = -1;
-                String dateTime = "Now";//Calendar.getInstance().getTime().toString().trim();
-                String temp = "Test";//tv_temp.getText().toString().trim();
-                String current = "Test";//tv_current.getText().toString().trim();
-                String pwm = "Test";//tv_pwm.getText().toString().trim();
+                String dateTime = Calendar.getInstance().getTime().toGMTString().trim();
+                String temp = tv_temp.getText().toString().trim();
+                String current = tv_current.getText().toString().trim();
+                String pwm = tv_pwm.getText().toString().trim();
 
                 long resultInsert = mDatabaseHelper.insert(id, dateTime, temp, current, pwm);
                 if(resultInsert == -1){

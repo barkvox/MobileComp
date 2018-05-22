@@ -138,16 +138,15 @@ public class DatabaseActivity extends AppCompatActivity {
 
     }
     private void init(){
-        btn_Insert = (Button) findViewById(R.id.btn_Insert);
-        btn_Update = (Button) findViewById(R.id.btn_Update);
+    //    btn_Insert = (Button) findViewById(R.id.btn_Insert);
+    //    btn_Update = (Button) findViewById(R.id.btn_Update);
         btn_Delete = (Button) findViewById(R.id.btn_Delete);
         btn_LoadAll = (Button) findViewById(R.id.btn_LoadAll);
 
-        btn_Insert.setOnClickListener(dbButtonsListener);
-        btn_Update.setOnClickListener(dbButtonsListener);
         btn_Delete.setOnClickListener(dbButtonsListener);
         btn_LoadAll.setOnClickListener(dbButtonsListener);
 
+        etID = (EditText) findViewById(R.id.et_id);
 
         tvFinalData = (TextView) findViewById(R.id.tvData);
     }
@@ -155,28 +154,15 @@ public class DatabaseActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     switch (v.getId()) {
-                        /*
-                        case R.id.btn_Update:
-                            long resultUpdate =  mDatabaseHelper.update(Integer.parseInt(getValue(etID)), getValue(etDateTime),getValue(etTemp),getValue(etCurrent),
-                                    Double.valueOf(getValue(etPWM)));
-                            if(resultUpdate == -1){
-                                Toast.makeText(DatabaseActivity.this, "Some error occured while updating", Toast.LENGTH_SHORT).show();
-                            }else if(resultUpdate == 1){
-                                Toast.makeText(DatabaseActivity.this, "Data Inserted Successfully, ID " + resultUpdate, Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(DatabaseActivity.this, "Some error occured, multiple records updated", Toast.LENGTH_SHORT).show();
-                            }
 
-                            break;
                         case R.id.btn_Delete:
-                            long resultDelete =  mDatabaseHelper.insert(Integer.parseInt(getValue(etID)), getValue(etDateTime),getValue(etTemp),getValue(etCurrent),
-                                    Double.valueOf(getValue(etPWM)));
+                            long resultDelete =  mDatabaseHelper.delete(Integer.parseInt(getValue(etID)));
                             if(resultDelete == 0){
                                 Toast.makeText(DatabaseActivity.this, "Some error occured while deleting", Toast.LENGTH_SHORT).show();
                             }else{
                                 Toast.makeText(DatabaseActivity.this, "Data Deleted Successfully, ID", Toast.LENGTH_SHORT).show();
                             }
-*/
+
                         case R.id.btn_LoadAll:
                             Log.d(TAG, "onClick: btnLoadAll");
                             StringBuffer finalData = new StringBuffer();
